@@ -1,0 +1,25 @@
+{
+  "name": "sfObject",
+  "version": "0.0.0",
+  "homepage": "https://github.com/familiar-studio/sfObject",
+  "authors": [
+    "Familiar"
+  ],
+  "description": "angular interface for interacting with saleforce",
+  "main": "src/connect.js",
+  "keywords": [
+    "salesforce",
+    "angular"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "jsforce": "~1.4.1",
+    "angular": "~1.3.15",
+    "angular-route": "~1.3.15"
+  }
+}
