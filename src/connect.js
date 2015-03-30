@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('sfObject')
+angular.module('sfObject', [])
 
   // .constant('SfUrl', 'https://XXX.salesforce.com')
   // .constant('SfClientId', 'XXXXXXX')

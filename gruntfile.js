@@ -17,23 +17,7 @@ module.exports = function(grunt) {
     },
     concat: {
       dist: {
-        src: [
-          // 'src/sfconfig.js', DO NOT COMMIT THIS FILE
-          'src/forcetk.js',
-          'src/connect.js',
-          'src/sfobject.js',
-          'src/directives/sf-array.js',
-          'src/directives/sf-date.js'
-        ],
-        // src: 'src/**/*.js',
-        src: [
-          // 'src/sfconfig.js', DO NOT COMMIT
-          'src/forcetk.js',
-          'src/connect.js',
-          'src/sfobject.js',
-          'src/directives/sf-array.js',
-          'src/directives/sf-date.js'
-        ],
+        src: 'src/**/*.js',
         dest: 'dist/sfobject.js'
       }
     },

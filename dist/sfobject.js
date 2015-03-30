@@ -1,5 +1,91 @@
 'use strict';
 
+angular.module('sfObject', [])
+
+  // .constant('SfUrl', 'https://XXX.salesforce.com')
+  // .constant('SfClientId', 'XXXXXXX')
+  // .constant('SfClientSecret', 'XXXXXXXX')
+  // .constant('SfProxyUrl', 'XXXXXXXX')
+  // .constant('SfUsername', 'user@example.com')
+  // .constant('SfPassword', 'XXXXXXXX')
+
+  .factory('Connect', function($q, $rootScope, ForceTk, SfUrl, SfClientId, SfClientSecret, SfProxyUrl, SfUsername, SfPassword) {
+
+    var conn;
+    var defer = $q.defer();
+
+    conn = new jsforce.Connection({
+      oauth2 : {
+        loginUrl : SfUrl,
+        clientId : SfClientId,
+        clientSecret : SfClientSecret,
+        // redirectUri : '',
+        proxyUrl: SfProxyUrl
+      },
+      proxyUrl: SfProxyUrl
+    });
+
+    conn.login(SfUsername, '}' + SfPassword,
+      function(err,res) {
+
+        if (err) {
+          throw err;
+          return console.error(err);
+        }
+
+        var client = ForceTk(conn.oauth2.clientId, conn.oauth2.loginUrl, null);
+        client.setSessionToken(conn.accessToken, null, conn.instanceUrl);
+        client.jsForce = conn;
+        defer.resolve(client);
+      }
+    );
+
+    return defer.promise;
+  });
+
+angular.module('sfObject')
+  .directive('sfArray', function() {
+    return {
+      restrict: 'A',
+      require: 'ngModel',
+      link: function(scope, element, attrs, controller) {
+
+        function toView(val) {
+          if (val) return val.split(';');
+        }
+
+        function toModel(val) {
+          if (val) return val.join(';');
+        }
+
+        controller.$formatters.push(toView);
+        controller.$parsers.push(toModel);
+      }
+    };
+  });
+
+angular.module('sfObject')
+  .directive('sfDate', function() {
+    return {
+      restrict: 'A',
+      require: 'ngModel',
+      link: function(element, scope, attrs, dateCtrl) {
+        function dateFromSF(val) {
+          if (val) return new Date(val)
+        }
+
+        function dateToSF(val) {
+          if (val) return val.getTime();
+        }
+
+        dateCtrl.$formatters.push(dateFromSF);
+        dateCtrl.$parsers.push(dateToSF);
+      }
+    };
+  });
+
+'use strict';
+
 angular.module('sfObject')
   .factory('ForceTk', function ($http) {
 
@@ -493,51 +579,6 @@ angular.module('sfObject')
 
 angular.module('sfObject')
 
-  // .constant('SfUrl', 'https://XXX.salesforce.com')
-  // .constant('SfClientId', 'XXXXXXX')
-  // .constant('SfClientSecret', 'XXXXXXXX')
-  // .constant('SfProxyUrl', 'XXXXXXXX')
-  // .constant('SfUsername', 'user@example.com')
-  // .constant('SfPassword', 'XXXXXXXX')
-
-  .factory('Connect', function($q, $rootScope, ForceTk, SfUrl, SfClientId, SfClientSecret, SfProxyUrl, SfUsername, SfPassword) {
-
-    var conn;
-    var defer = $q.defer();
-
-    conn = new jsforce.Connection({
-      oauth2 : {
-        loginUrl : SfUrl,
-        clientId : SfClientId,
-        clientSecret : SfClientSecret,
-        // redirectUri : '',
-        proxyUrl: SfProxyUrl
-      },
-      proxyUrl: SfProxyUrl
-    });
-
-    conn.login(SfUsername, '}' + SfPassword,
-      function(err,res) {
-
-        if (err) {
-          throw err;
-          return console.error(err);
-        }
-
-        var client = ForceTk(conn.oauth2.clientId, conn.oauth2.loginUrl, null);
-        client.setSessionToken(conn.accessToken, null, conn.instanceUrl);
-        client.jsForce = conn;
-        defer.resolve(client);
-      }
-    );
-
-    return defer.promise;
-  });
-
-'use strict';
-
-angular.module('sfObject')
-
   .service('SFObject', function ($q, Connect, $log, $rootScope) {
 
     // instantiate our initial object
@@ -892,45 +933,4 @@ angular.module('sfObject')
 
     return SFObject;
 
-  });
-
-angular.module('sfObject')
-  .directive('sfArray', function() {
-    return {
-      restrict: 'A',
-      require: 'ngModel',
-      link: function(scope, element, attrs, controller) {
-
-        function toView(val) {
-          if (val) return val.split(';');
-        }
-
-        function toModel(val) {
-          if (val) return val.join(';');
-        }
-
-        controller.$formatters.push(toView);
-        controller.$parsers.push(toModel);
-      }
-    };
-  });
-
-angular.module('sfObject')
-  .directive('sfDate', function() {
-    return {
-      restrict: 'A',
-      require: 'ngModel',
-      link: function(element, scope, attrs, dateCtrl) {
-        function dateFromSF(val) {
-          if (val) return new Date(val)
-        }
-
-        function dateToSF(val) {
-          if (val) return val.getTime();
-        }
-
-        dateCtrl.$formatters.push(dateFromSF);
-        dateCtrl.$parsers.push(dateToSF);
-      }
-    };
   });
