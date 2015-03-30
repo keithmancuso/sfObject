@@ -14,31 +14,37 @@ angular.module('sfObject', [])
     var conn;
     var defer = $q.defer();
 
-    conn = new jsforce.Connection({
-      oauth2 : {
-        loginUrl : SfUrl,
-        clientId : SfClientId,
-        clientSecret : SfClientSecret,
-        // redirectUri : '',
+    if (isForce > 0) {
+      conn  = new remotetk.Client();
+      urlPath = "/resource/CoachApp/" + urlPath;
+      defer.resolve(conn);
+
+    } else {
+      conn = new jsforce.Connection({
+        oauth2 : {
+          loginUrl : SfUrl,
+          clientId : SfClientId,
+          clientSecret : SfClientSecret,
+          // redirectUri : '',
+          proxyUrl: SfProxyUrl
+        },
         proxyUrl: SfProxyUrl
-      },
-      proxyUrl: SfProxyUrl
-    });
+      });
 
-    conn.login(SfUsername, '}' + SfPassword,
-      function(err,res) {
+      conn.login(SfUsername, SfPassword,
+        function(err,res) {
 
-        if (err) {
-          throw err;
-          return console.error(err);
+          if (err) {
+            throw err;
+            return console.error(err);
+          }
+
+          var client = ForceTk(conn.oauth2.clientId, conn.oauth2.loginUrl, null);
+          client.setSessionToken(conn.accessToken, null, conn.instanceUrl);
+          client.jsForce = conn;
+          defer.resolve(client);
         }
-
-        var client = ForceTk(conn.oauth2.clientId, conn.oauth2.loginUrl, null);
-        client.setSessionToken(conn.accessToken, null, conn.instanceUrl);
-        client.jsForce = conn;
-        defer.resolve(client);
-      }
-    );
-
+      );
+    }
     return defer.promise;
   });

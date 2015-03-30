@@ -78,7 +78,7 @@ angular.module('sfObject')
               var url = this.loginUrl + '/services/oauth2/token';
               // return $j.ajax({
                 return $http({
-                  type: 'POST',
+                  method: 'POST',
                   url: (this.proxyUrl !== null) ? this.proxyUrl: url,
                   cache: false,
                   processData: false,
@@ -140,7 +140,7 @@ angular.module('sfObject')
               console.log(that.authzHeader)
               console.log(that.sessionId)
               return $http({
-                  type: method || "GET",
+                  method: method || "GET",
                   async: this.asyncAjax,
                   url: url,
                   contentType: method == "DELETE" || method == "GET" ? null : 'application/json',

@@ -281,8 +281,7 @@ angular.module('sfObject')
 
             record.edit = false;
             record.err = false;
-
-            $rootScope.$apply();
+            
             defer.resolve(ret);
 
             // conn.retrieve(objectName, Id, selectFields, function (result) {

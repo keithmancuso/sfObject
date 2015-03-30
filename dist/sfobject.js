@@ -222,9 +222,6 @@ angular.module('sfObject')
           forcetk.Client.prototype.ajax = function(path, callback, error, method, payload, retry) {
               var that = this;
               var url = this.instanceUrl + '/services/data' + path;
-              // return $j.ajax({
-              console.log(that.authzHeader)
-              console.log(that.sessionId)
               return $http({
                   type: method || "GET",
                   async: this.asyncAjax,
@@ -332,7 +329,6 @@ angular.module('sfObject')
           forcetk.Client.prototype.apexrest = function(path, callback, error, method, payload, paramMap, retry) {
               var that = this;
               var url = this.instanceUrl + '/services/apexrest' + path;
-              // return $j.ajax({
                 return $http({
                   type: method || "GET",
                   async: this.asyncAjax,
