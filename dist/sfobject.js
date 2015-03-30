@@ -14,32 +14,38 @@ angular.module('sfObject', [])
     var conn;
     var defer = $q.defer();
 
-    conn = new jsforce.Connection({
-      oauth2 : {
-        loginUrl : SfUrl,
-        clientId : SfClientId,
-        clientSecret : SfClientSecret,
-        // redirectUri : '',
+    if (isForce > 0) {
+      conn  = new remotetk.Client();
+      urlPath = "/resource/CoachApp/" + urlPath;
+      defer.resolve(conn);
+
+    } else {
+      conn = new jsforce.Connection({
+        oauth2 : {
+          loginUrl : SfUrl,
+          clientId : SfClientId,
+          clientSecret : SfClientSecret,
+          // redirectUri : '',
+          proxyUrl: SfProxyUrl
+        },
         proxyUrl: SfProxyUrl
-      },
-      proxyUrl: SfProxyUrl
-    });
+      });
 
-    conn.login(SfUsername, '}' + SfPassword,
-      function(err,res) {
+      conn.login(SfUsername, SfPassword,
+        function(err,res) {
 
-        if (err) {
-          throw err;
-          return console.error(err);
+          if (err) {
+            throw err;
+            return console.error(err);
+          }
+
+          var client = ForceTk(conn.oauth2.clientId, conn.oauth2.loginUrl, null);
+          client.setSessionToken(conn.accessToken, null, conn.instanceUrl);
+          client.jsForce = conn;
+          defer.resolve(client);
         }
-
-        var client = ForceTk(conn.oauth2.clientId, conn.oauth2.loginUrl, null);
-        client.setSessionToken(conn.accessToken, null, conn.instanceUrl);
-        client.jsForce = conn;
-        defer.resolve(client);
-      }
-    );
-
+      );
+    }
     return defer.promise;
   });
 
@@ -164,7 +170,7 @@ angular.module('sfObject')
               var url = this.loginUrl + '/services/oauth2/token';
               // return $j.ajax({
                 return $http({
-                  type: 'POST',
+                  method: 'POST',
                   url: (this.proxyUrl !== null) ? this.proxyUrl: url,
                   cache: false,
                   processData: false,
@@ -222,8 +228,11 @@ angular.module('sfObject')
           forcetk.Client.prototype.ajax = function(path, callback, error, method, payload, retry) {
               var that = this;
               var url = this.instanceUrl + '/services/data' + path;
+              // return $j.ajax({
+              console.log(that.authzHeader)
+              console.log(that.sessionId)
               return $http({
-                  type: method || "GET",
+                  method: method || "GET",
                   async: this.asyncAjax,
                   url: url,
                   contentType: method == "DELETE" || method == "GET" ? null : 'application/json',
@@ -329,6 +338,7 @@ angular.module('sfObject')
           forcetk.Client.prototype.apexrest = function(path, callback, error, method, payload, paramMap, retry) {
               var that = this;
               var url = this.instanceUrl + '/services/apexrest' + path;
+              // return $j.ajax({
                 return $http({
                   type: method || "GET",
                   async: this.asyncAjax,
@@ -854,8 +864,7 @@ angular.module('sfObject')
 
             record.edit = false;
             record.err = false;
-
-            $rootScope.$apply();
+            
             defer.resolve(ret);
 
             // conn.retrieve(objectName, Id, selectFields, function (result) {
