@@ -229,8 +229,6 @@ angular.module('sfObject')
               var that = this;
               var url = this.instanceUrl + '/services/data' + path;
               // return $j.ajax({
-              console.log(that.authzHeader)
-              console.log(that.sessionId)
               return $http({
                   method: method || "GET",
                   async: this.asyncAjax,
@@ -585,7 +583,7 @@ angular.module('sfObject')
 
 angular.module('sfObject')
 
-  .service('SFObject', function ($q, Connect, $log, $rootScope) {
+  .service('SFObject', function ($q, Connect, $log) {
 
     // instantiate our initial object
     var SFObject = function(objectName, selectFields, calculatedFields) {
@@ -864,7 +862,7 @@ angular.module('sfObject')
 
             record.edit = false;
             record.err = false;
-            
+
             defer.resolve(ret);
 
             // conn.retrieve(objectName, Id, selectFields, function (result) {
@@ -879,7 +877,6 @@ angular.module('sfObject')
             record.err = angular.fromJson(err.responseText);
             record.edit = true;
             $log.error('wont update', err);
-            $rootScope.$apply();
             defer.reject(err);
 
           });
@@ -891,7 +888,6 @@ angular.module('sfObject')
             record.Id = ret.id;
             record.edit = false;
             record.err = false;
-            $rootScope.$apply();
 
             defer.resolve(ret);
             // conn.retrieve(objectName, ret.id, selectFields, function (result) {
@@ -906,7 +902,6 @@ angular.module('sfObject')
             record.err =  angular.toJson(err.responseText);
             record.edit = true;
             $log.error('wont update', err);
-            $rootScope.$apply();
             defer.reject(record);
 
           });

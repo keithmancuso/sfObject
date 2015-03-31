@@ -137,8 +137,6 @@ angular.module('sfObject')
               var that = this;
               var url = this.instanceUrl + '/services/data' + path;
               // return $j.ajax({
-              console.log(that.authzHeader)
-              console.log(that.sessionId)
               return $http({
                   method: method || "GET",
                   async: this.asyncAjax,
