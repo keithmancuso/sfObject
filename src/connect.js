@@ -16,7 +16,6 @@ angular.module('sfObject', [])
 
     if (isForce > 0) {
       conn  = new remotetk.Client();
-      urlPath = "/resource/CoachApp/" + urlPath;
       defer.resolve(conn);
 
     } else {
