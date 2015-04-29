@@ -174,7 +174,7 @@ angular.module('sfObject')
                   //       //  xhr.setRequestHeader('X-User-Agent', forceTkAgent);
                   //     }
                   // }
-              }).success(callback);
+              }).success(callback).error(error);
           }
 
           /**
