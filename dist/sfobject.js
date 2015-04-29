@@ -1,14 +1,18 @@
 'use strict';
 
-angular.module('sfObject', [])
+var isForce = window.location.host.indexOf("force.com");
 
-  // .constant('SfUrl', 'https://XXX.salesforce.com')
-  // .constant('SfClientId', 'XXXXXXX')
-  // .constant('SfClientSecret', 'XXXXXXXX')
-  // .constant('SfProxyUrl', 'XXXXXXXX')
-  // .constant('SfUsername', 'user@example.com')
-  // .constant('SfPassword', 'XXXXXXXX')
+if (isForce > 0) {
+  angular.module('sfObject', [])
+    .constant('SfUrl', 'https://XXX.salesforce.com')
+    .constant('SfClientId', 'XXXXXXX')
+    .constant('SfClientSecret', 'XXXXXXXX')
+    .constant('SfProxyUrl', 'XXXXXXXX')
+    .constant('SfUsername', 'user@example.com')
+    .constant('SfPassword', 'XXXXXXXX');
+}
 
+angular.module('sfObject')
   .factory('Connect', function($q, $rootScope, ForceTk, SfUrl, SfClientId, SfClientSecret, SfProxyUrl, SfUsername, SfPassword) {
 
     var conn;
@@ -265,7 +269,7 @@ angular.module('sfObject')
                   //       //  xhr.setRequestHeader('X-User-Agent', forceTkAgent);
                   //     }
                   // }
-              }).success(callback);
+              }).success(callback).error(error);
           }
 
           /**
