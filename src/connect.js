@@ -1,18 +1,6 @@
 'use strict';
 
-var isForce = window.location.host.indexOf("force.com");
-
-if (isForce > 0) {
-  angular.module('sfObject', [])
-    .constant('SfUrl', 'https://XXX.salesforce.com')
-    .constant('SfClientId', 'XXXXXXX')
-    .constant('SfClientSecret', 'XXXXXXXX')
-    .constant('SfProxyUrl', 'XXXXXXXX')
-    .constant('SfUsername', 'user@example.com')
-    .constant('SfPassword', 'XXXXXXXX');
-}
-
-angular.module('sfObject')
+angular.module('sfObject', [])
   .factory('Connect', function($q, $rootScope, ForceTk, SfUrl, SfClientId, SfClientSecret, SfProxyUrl, SfUsername, SfPassword) {
 
     var conn;
@@ -51,3 +39,14 @@ angular.module('sfObject')
     }
     return defer.promise;
   });
+
+  var isForce = window.location.host.indexOf("force.com");
+  if (isForce > 0) {
+    angular.module('sfObject')
+      .constant('SfUrl', 'https://XXX.salesforce.com')
+      .constant('SfClientId', 'XXXXXXX')
+      .constant('SfClientSecret', 'XXXXXXXX')
+      .constant('SfProxyUrl', 'XXXXXXXX')
+      .constant('SfUsername', 'user@example.com')
+      .constant('SfPassword', 'XXXXXXXX');
+  }
