@@ -732,6 +732,25 @@ angular.module('sfObject')
       return defer.promise;
     }
 
+     SFObject.prototype.getFields = function() {
+      var defer = $q.defer();
+      var objectName = this.objectName;
+
+      var fields = [];
+
+      Connect.then(function (conn) {
+        // get all the picklists
+        conn.describe(objectName, null, function(meta) {
+           angular.forEach(meta.fields, function(value, key){
+              fields[value.name]  = value;
+          });
+          defer.resolve(fields);
+
+        });
+      });
+      return defer.promise;
+    };
+
     SFObject.prototype.sendEmail = function (body) {
       var defer = $q.defer(),
           payload = JSON.stringify(body);
